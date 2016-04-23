@@ -772,3 +772,6 @@ $cfg['LeftRecentTable'] = 0;
 $cfg['MaxCharactersInDisplayedSQL'] = 4234234424423432;
 $cfg['DisplayBinaryAsHex'] = FALSE;
 $cfg['MaxTableList'] = 5000;
+
+# for backwards compatibility
+require __DIR__ . '/ereg.inc.php';
