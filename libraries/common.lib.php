@@ -2,6 +2,8 @@
 /* $Id: common.lib.php,v 2.151.2.1 2005/10/21 02:40:23 lem9 Exp $ */
 // vim: expandtab sw=4 ts=4 sts=4:
 
+require __DIR__ . '/ereg.inc.php';
+
 /**
  * Misc stuff and functions used by almost all the scripts.
  * Among other things, it contains the advanced authentification work.
@@ -88,13 +90,12 @@ if (file_exists('./config.inc.developer.php')) {
  * Parses the configuration file and gets some constants used to define
  * versions of phpMyAdmin/php/mysql...
  */
+
+require __DIR__ . '/../' . $cfgfile_to_load;
 $old_error_reporting = error_reporting(0);
-// We can not use include as it fails on parse error
-$config_fd = fopen($cfgfile_to_load, 'r');
-$result = eval('?>' . fread($config_fd, filesize($cfgfile_to_load)));
-fclose($config_fd);
+$result = FALSE;
 // Eval failed
-if ($result === FALSE || (!isset($cfgServers) && !isset($cfg['Servers']))) {
+if (!isset($cfg['Servers'])) {
     // Creates fake settings
     $cfg = array('DefaultLang'           => 'en-iso-8859-1',
                     'AllowAnywhereRecoding' => FALSE);
@@ -113,23 +114,6 @@ if ($result === FALSE || (!isset($cfgServers) && !isset($cfg['Servers']))) {
 }
 error_reporting($old_error_reporting);
 unset($old_error_reporting, $cfgfile_to_load);
-
-/**
- * Includes compatibility code for older config.inc.php revisions
- * if necessary
- */
-if (isset($cfg['FileRevision'])) {
-    // converting revision string into an array
-    //     e.g. "Revision: 2.0" becomes array(2, 0).
-    $cfg['FileRevision'] = str_replace('$' . 'Revision: ', '', $cfg['FileRevision']);
-    $cfg['FileRevision'] = str_replace(' $', '', $cfg['FileRevision']);
-    $cfg['FileRevision'] = explode('.', $cfg['FileRevision']);
-} else {
-    $cfg['FileRevision'] = array(1, 1);
-}
-if ($cfg['FileRevision'][0] < 2 || ($cfg['FileRevision'][0] == 2 && $cfg['FileRevision'][1] < 64)) {
-    require_once('./libraries/config_import.lib.php');
-}
 
 /**
  * Includes the language file if it hasn't been included yet

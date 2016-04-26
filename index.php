@@ -11,7 +11,6 @@ require_once('./libraries/common.lib.php');
  * Includes the ThemeManager if it hasn't been included yet
  */
 require_once('./libraries/select_theme.lib.php');
-
 /**
  * Saves collation_connection (coming from main.php) in a cookie
  */
